@@ -1,158 +1,151 @@
-# Fake News Classification using Classical NLP
+# <u>Fake News Classification using Classical NLP</u>
 
-A binary text classification system that distinguishes fake news from factual reporting using classical NLP techniques and machine learning.
+This project explores fake news detection using **classical NLP techniques** and **linear machine learning models**.  
+The goal is to build a **clear and interpretable pipeline**, focusing on fundamentals rather than complex architectures.
 
-## Overview
+---
 
-This project implements fake news detection using:
-- **Preprocessing**: Tokenization, stemming, and stopword removal
-- **Feature Engineering**: TF-IDF vectorization and linguistic analysis
-- **Models**: Logistic Regression and Linear SVM
-- **Evaluation**: Standard classification metrics and comparison
+## <u>Overview</u>
 
-## Dataset
+The task is a **binary text classification problem**:
+- **Fake News**
+- **Factual News**
 
-The dataset contains news articles with the following columns:
-- `title`: Article headline
-- `text`: Full article content
-- `date`: Publication date
-- `fake_or_factual`: Label (Fake News or Factual News)
+The project follows a traditional NLP workflow:
+- text preprocessing
+- feature extraction (Bag-of-Words / TF-IDF)
+- training linear classifiers
+- evaluating performance using standard metrics
 
-**Data Split**: 70% training, 30% test
-**Test Set Size**: 60 articles (27 Factual News, 33 Fake News)
+---
 
-## Methodology
+## <u>Dataset</u>
 
-### 1. Data Preprocessing
-- Convert text to lowercase
-- Remove special characters and digits
-- Tokenize into words
-- Remove stopwords (English)
-- Apply Porter stemming
+The dataset consists of news articles with the following fields:
 
-### 2. Feature Extraction
-- POS (Part-of-Speech) tagging using spaCy
+- `title` – article headline  
+- `text` – full article content  
+- `date` – publication date  
+- `fake_or_factual` – label (Fake News / Factual News)
+
+**Data split**
+- Training: 70%
+- Testing: 30%
+
+**Test set size**
+- 60 articles  
+  - 27 Factual News  
+  - 33 Fake News  
+
+---
+
+## <u>Methodology</u>
+
+### 1. <u>Text Preprocessing</u>
+The text is cleaned using a simple and transparent pipeline:
+- lowercasing
+- removal of special characters and digits
+- tokenization
+- stopword removal (English)
+- Porter stemming
+
+This keeps the feature space compact and interpretable.
+
+---
+
+### 2. <u>Feature Extraction</u>
+The following linguistic features are explored:
+- Bag-of-Words / TF-IDF representations
+- Part-of-Speech (POS) tagging
 - Named Entity Recognition (NER)
-- Linguistic feature analysis
-- TF-IDF vectorization for model training
+- basic linguistic frequency analysis
 
-### 3. Model Training
-Two classical classifiers are trained and compared:
+TF-IDF features are used for model training.
 
-| Model | Type | Algorithm |
-|-------|------|-----------|
-| Logistic Regression | Linear Classifier | Probabilistic learning |
-| Linear SVM | Support Vector Machine | Hinge loss (SGDClassifier) |
+---
 
-### 4. Evaluation
-Models are evaluated on the test set using standard metrics.
+### 3. <u>Models</u>
+Two linear classifiers are trained and compared:
 
-## Results
+- **Logistic Regression**
+- **Linear Support Vector Machine (SGDClassifier)**
 
-### Model Performance on Test Set
+These models were chosen because they perform well on sparse text data and are easy to interpret.
 
-**Linear SVM:**
-| Class | Precision | Recall | F1-Score | Support |
-|-------|-----------|--------|----------|---------|
-| Factual News | 0.79 | 0.96 | 0.87 | 27 |
-| Fake News | 0.96 | 0.79 | 0.87 | 33 |
-| **Accuracy** | | | **0.87** | 60 |
-| Macro Avg | 0.88 | 0.88 | 0.87 | 60 |
-| Weighted Avg | 0.88 | 0.87 | 0.87 | 60 |
+---
 
-**Logistic Regression:**
-| Class | Precision | Recall | F1-Score | Support |
-|-------|-----------|--------|----------|---------|
-| Factual News | 0.74 | 0.96 | 0.84 | 27 |
-| Fake News | 0.96 | 0.73 | 0.83 | 33 |
-| **Accuracy** | | | **0.83** | 60 |
-| Macro Avg | 0.85 | 0.85 | 0.83 | 60 |
-| Weighted Avg | 0.86 | 0.83 | 0.83 | 60 |
+### 4. <u>Evaluation</u>
+Models are evaluated on the test set using:
+- accuracy
+- precision
+- recall
+- F1-score
 
-### Key Observations
+---
 
-1. **Linear SVM outperforms Logistic Regression** with 87% accuracy vs 83%
-2. **Precision-Recall Trade-off**:
-   - SVM achieves better overall balance
-   - LR has higher recall for factual news (0.96 vs 0.96) but lower precision
-3. **Common Nouns in Fake News**: People, President, Women, Time, Campaign, Government, Law, Year, State, Election
-4. **Common Nouns in Factual News**: Government, Year, State, Bill, Administration, President, Election, People, Order, Law
+## <u>Results</u>
 
-## Installation
+Both models perform reasonably well on the test set:
 
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/fake-news-classification-nlp.git
-cd fake-news-classification-nlp
+- **Logistic Regression accuracy:** ~83%
+- **Linear SVM accuracy:** ~87%
 
-# Install dependencies
-pip install -r requirements.txt
+The Linear SVM shows a better balance between precision and recall, particularly for detecting fake news, and is therefore the preferred model in this setup.
 
-# Download NLTK and spaCy data
-python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
-python -m spacy download en_core_web_sm
-```
+---
 
-## Usage
+## <u>Key Observations</u>
 
-```bash
-# Run the Jupyter notebook
-jupyter notebook notebooks/fake_news_classification.ipynb
-```
+- Linear models are strong baselines for text classification
+- Feature representation has a significant impact on performance
+- Accuracy alone is insufficient; recall and F1-score provide better insight
+- Fake and factual news differ in the frequency of certain nouns and named entities
 
-The notebook includes:
-- Data loading and exploration
-- Text preprocessing with tokenization and stemming
-- POS tagging and named entity extraction
-- Linguistic feature analysis
-- TF-IDF feature extraction
-- Model training (Logistic Regression + Linear SVM)
-- Performance evaluation with confusion matrices
-- Classification reports
+---
 
-## Tech Stack
-
-- **Data Processing**: Pandas, NumPy
-- **NLP**: NLTK, spaCy
-- **Feature Extraction**: Scikit-learn (TfidfVectorizer)
-- **Modeling**: Scikit-learn (LogisticRegression, SGDClassifier)
-- **Visualization**: Matplotlib, Seaborn
-
-## Limitations & Future Work
-
-### Current Limitations
-- Limited to English text only
-- Binary classification (Fake vs Factual)
-- Fixed preprocessing pipeline
-- No model persistence/serialization
-- No real-time prediction capability
-
-### Future Improvements
-- Hyperparameter tuning using GridSearchCV
-- Ensemble methods (voting classifier, stacking)
-- Advanced feature engineering (sentiment, readability, linguistic complexity)
-- N-gram analysis and Topic modeling (LDA)
-- Cross-validation for robust evaluation
-- Model explainability (feature importance, SHAP values)
-- Production-ready API deployment
-
-## Files
+## <u>Project Structure</u>
 
 ```
 fake-news-classification-nlp/
 ├── notebooks/
-│   └── fake_news_classification.ipynb    # Main analysis notebook
+│   └── fake_news_classification.ipynb
 ├── data/
-│   └── fake_news_data.xlsx               # Dataset
-├── README.md                              # This file
-├── requirements.txt                       # Python dependencies
-└── .gitignore                             # Git configuration
+│   └── fake_news_data.xlsx
+├── README.md
+├── requirements.txt
+└── .gitignore
 ```
 
-## License
+---
+
+## <u>Tech Stack</u>
+
+- Python  
+- Pandas, NumPy  
+- NLTK, spaCy  
+- Scikit-learn  
+- Matplotlib, Seaborn  
+
+---
+
+## <u>Limitations & Future Work</u>
+
+This project is intended as a **classical NLP baseline**.
+
+Possible next steps:
+- TF-IDF hyperparameter tuning
+- n-gram feature exploration
+- cross-validation on a larger dataset
+- comparison with more advanced models
+
+---
+
+## <u>License</u>
 
 MIT License
 
-## Author
+---
+
+## <u>Author</u>
 
 Nipun
