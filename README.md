@@ -6,19 +6,20 @@ A binary text classification system that distinguishes fake news from factual re
 
 This project implements fake news detection using:
 - **Preprocessing**: Tokenization, stemming, and stopword removal
-- **Feature Engineering**: TF-IDF vectorization (5000 features)
+- **Feature Engineering**: TF-IDF vectorization and linguistic analysis
 - **Models**: Logistic Regression and Linear SVM
-- **Evaluation**: Standard classification metrics (accuracy, precision, recall, F1)
+- **Evaluation**: Standard classification metrics and comparison
 
 ## Dataset
 
-The dataset contains 6,335 news articles with the following columns:
+The dataset contains news articles with the following columns:
 - `title`: Article headline
 - `text`: Full article content
 - `date`: Publication date
 - `fake_or_factual`: Label (Fake News or Factual News)
 
-**Class Distribution**: Roughly balanced between fake and factual news
+**Data Split**: 70% training, 30% test
+**Test Set Size**: 60 articles (27 Factual News, 33 Fake News)
 
 ## Methodology
 
@@ -26,42 +27,56 @@ The dataset contains 6,335 news articles with the following columns:
 - Convert text to lowercase
 - Remove special characters and digits
 - Tokenize into words
-- Remove stopwords
+- Remove stopwords (English)
 - Apply Porter stemming
 
 ### 2. Feature Extraction
-- TF-IDF (Term Frequency-Inverse Document Frequency)
-- Maximum 5000 features with document frequency constraints
-- Sparse matrix representation
+- POS (Part-of-Speech) tagging using spaCy
+- Named Entity Recognition (NER)
+- Linguistic feature analysis
+- TF-IDF vectorization for model training
 
 ### 3. Model Training
-Two models are trained and compared:
+Two classical classifiers are trained and compared:
 
 | Model | Type | Algorithm |
 |-------|------|-----------|
-| Logistic Regression | Linear Classifier | Probabilistic |
-| Linear SVM | Support Vector Machine | Hinge loss with SGD |
+| Logistic Regression | Linear Classifier | Probabilistic learning |
+| Linear SVM | Support Vector Machine | Hinge loss (SGDClassifier) |
 
 ### 4. Evaluation
-Models are evaluated on an 80/20 train-test split with:
-- Accuracy
-- Precision
-- Recall
-- F1-Score
-- Confusion Matrix
+Models are evaluated on the test set using standard metrics.
 
 ## Results
 
-Both models achieve strong performance on the test set:
+### Model Performance on Test Set
 
-| Metric | Logistic Regression | Linear SVM |
-|--------|-------------------|-----------|
-| Accuracy | ~0.93 | ~0.92 |
-| Precision | ~0.92 | ~0.91 |
-| Recall | ~0.94 | ~0.93 |
-| F1-Score | ~0.93 | ~0.92 |
+**Linear SVM:**
+| Class | Precision | Recall | F1-Score | Support |
+|-------|-----------|--------|----------|---------|
+| Factual News | 0.79 | 0.96 | 0.87 | 27 |
+| Fake News | 0.96 | 0.79 | 0.87 | 33 |
+| **Accuracy** | | | **0.87** | 60 |
+| Macro Avg | 0.88 | 0.88 | 0.87 | 60 |
+| Weighted Avg | 0.88 | 0.87 | 0.87 | 60 |
 
-The models successfully identify linguistic patterns that distinguish fake from factual news.
+**Logistic Regression:**
+| Class | Precision | Recall | F1-Score | Support |
+|-------|-----------|--------|----------|---------|
+| Factual News | 0.74 | 0.96 | 0.84 | 27 |
+| Fake News | 0.96 | 0.73 | 0.83 | 33 |
+| **Accuracy** | | | **0.83** | 60 |
+| Macro Avg | 0.85 | 0.85 | 0.83 | 60 |
+| Weighted Avg | 0.86 | 0.83 | 0.83 | 60 |
+
+### Key Observations
+
+1. **Linear SVM outperforms Logistic Regression** with 87% accuracy vs 83%
+2. **Precision-Recall Trade-off**:
+   - SVM achieves better overall balance
+   - LR has higher recall for factual news (0.96 vs 0.96) but lower precision
+3. **Common Nouns in Fake News**: People, President, Women, Time, Campaign, Government, Law, Year, State, Election
+4. **Common Nouns in Factual News**: Government, Year, State, Bill, Administration, President, Election, People, Order, Law
 
 ## Installation
 
@@ -73,8 +88,9 @@ cd fake-news-classification-nlp
 # Install dependencies
 pip install -r requirements.txt
 
-# Download NLTK data
+# Download NLTK and spaCy data
 python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
+python -m spacy download en_core_web_sm
 ```
 
 ## Usage
@@ -86,22 +102,18 @@ jupyter notebook notebooks/fake_news_classification.ipynb
 
 The notebook includes:
 - Data loading and exploration
-- Text preprocessing pipeline
-- Feature extraction
-- Model training and evaluation
-- Performance visualization
-
-## Key Findings
-
-1. **Simple Models Work Well**: Classical ML outperforms complex alternatives when proper feature engineering is applied
-2. **Text Patterns Matter**: Fake news exhibits distinct vocabulary and linguistic patterns
-3. **Balanced Approach**: Using TF-IDF with appropriate thresholds prevents overfitting
-4. **Interpretability**: Unlike deep learning, feature importance can be extracted directly
+- Text preprocessing with tokenization and stemming
+- POS tagging and named entity extraction
+- Linguistic feature analysis
+- TF-IDF feature extraction
+- Model training (Logistic Regression + Linear SVM)
+- Performance evaluation with confusion matrices
+- Classification reports
 
 ## Tech Stack
 
 - **Data Processing**: Pandas, NumPy
-- **NLP**: NLTK
+- **NLP**: NLTK, spaCy
 - **Feature Extraction**: Scikit-learn (TfidfVectorizer)
 - **Modeling**: Scikit-learn (LogisticRegression, SGDClassifier)
 - **Visualization**: Matplotlib, Seaborn
@@ -109,18 +121,20 @@ The notebook includes:
 ## Limitations & Future Work
 
 ### Current Limitations
-- Limited to English text
-- Binary classification only
+- Limited to English text only
+- Binary classification (Fake vs Factual)
 - Fixed preprocessing pipeline
-- No real-time predictions
+- No model persistence/serialization
+- No real-time prediction capability
 
 ### Future Improvements
-- Hyperparameter tuning with cross-validation
-- Ensemble methods (voting, stacking)
-- Advanced feature engineering (sentiment, readability metrics)
-- Domain-specific fine-tuning
-- Production deployment (API endpoint)
-- Real-time model updates
+- Hyperparameter tuning using GridSearchCV
+- Ensemble methods (voting classifier, stacking)
+- Advanced feature engineering (sentiment, readability, linguistic complexity)
+- N-gram analysis and Topic modeling (LDA)
+- Cross-validation for robust evaluation
+- Model explainability (feature importance, SHAP values)
+- Production-ready API deployment
 
 ## Files
 
